@@ -2,11 +2,15 @@
 //Front End Code
 // desktopCapturer records screen, remote access' IPC (host proceses)
 const { desktopCapturer, remote } = require('electron');
+// eslint-disable-next-line no-undef
 const videoElement = document.querySelector('video');
 const { writeFile } = require('fs');
 //Buttons
+// eslint-disable-next-line no-undef
 const startBtn = document.querySelector('startBtn');
+// eslint-disable-next-line no-undef
 const stopBtn = document.querySelector('stopBtn');
+// eslint-disable-next-line no-undef
 const videoSelectBtn = document.getElementById('videoSelectBtn');
 videoSelectBtn.onclick = getVideoSources;
 
@@ -51,6 +55,7 @@ const selectSource = async (source) => {
 
 
   //Create Stream
+  // eslint-disable-next-line no-undef
   const stream = await navigator.mediaDevices.getUserMedia(constraints);
   videoElement.srcObject = stream;
   videoElement.play();
@@ -71,6 +76,7 @@ const selectSource = async (source) => {
 
   //Save the video on stop
   async function handleStop(e) {
+    // eslint-disable-next-line no-undef
     const blob = new Blob(recordedChunks, {
       type: 'video/webm; codecs=vp9'
     });
