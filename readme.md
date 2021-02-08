@@ -9,11 +9,6 @@ App is deployable to desktop using Electron.
 - Electron-Forge
 - FS
 
-```
-Depending on your OS, extra packages or programs maybe required to make all install files.
-ie on Linux may need to install 'rpmbuilder' and 'mono-devel' (win32 builds) using `apt-get`
-```
-
 ### To Run
 
 1. Clone the Repo
@@ -28,3 +23,8 @@ ie on Linux may need to install 'rpmbuilder' and 'mono-devel' (win32 builds) usi
 | Windows | `npm run make-win`   | Creates install folder with EXE & DLLs |
 | Linux   | `npm run make-linux` | DEB & RPM                              |
 | MAC     | `npm run make-mac`   | DMG                                    |
+
+```
+Depending on your OS, extra packages or programs maybe required to make all install files.
+ie on Linux may need to install 'rpmbuilder' and 'mono-devel' (win32 builds) using `apt-get`
+```
