@@ -8,8 +8,9 @@
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
-    "make-linux": "npx @electron-forge/cli make --platform linux --targets deb",
-    "make-win": "npx @electron-forge/cli make --platform win32",
+    "make-linux": "npx electron-forge make --platform linux",
+    "make-mac": "npx electron-forge make --platform darwin",
+    "make-win": "npx electron-forge make --platform win32",
     "publish": "electron-forge publish",
     "lint": "echo \"No linting configured\""
   },
