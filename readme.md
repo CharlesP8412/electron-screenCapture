@@ -9,6 +9,11 @@ App is deployable to desktop using Electron.
 - Electron-Forge
 - FS
 
+```
+Depending on your OS, extra packages or programs maybe required to make all install files.
+ie on Linux may need to install 'rpmbuilder' and 'mono-devel' (win32 builds) using `apt-get`
+```
+
 ### To Run
 
 1. Clone the Repo
