@@ -2,20 +2,37 @@
 //Front End Code
 // desktopCapturer records screen, remote access' IPC (host proceses)
 const { desktopCapturer, remote } = require('electron');
-// eslint-disable-next-line no-undef
-const videoElement = document.querySelector('video');
+//Get all screens on desktop
+const { Menu, dialog } = remote;
 const { writeFile } = require('fs');
+const videoElement = document.querySelector('video');
+
+
+// Global state
+let mediaRecorder; // MediaRecorder instance to capture footage
+const recordedChunks = [];
+
+
 //Buttons
-// eslint-disable-next-line no-undef
-const startBtn = document.querySelector('startBtn');
-// eslint-disable-next-line no-undef
-const stopBtn = document.querySelector('stopBtn');
-// eslint-disable-next-line no-undef
+// const startBtn = document.querySelector('startBtn');
+const startBtn = document.getElementById('startBtn');
+startBtn.onclick = e => {
+  mediaRecorder.start();
+  startBtn.classList.add('is-danger');
+  startBtn.innerText = 'Recording';
+};
+
+const stopBtn = document.getElementById('stopBtn');
+
+stopBtn.onclick = e => {
+  mediaRecorder.stop();
+  startBtn.classList.remove('is-danger');
+  startBtn.innerText = 'Start';
+};
+
 const videoSelectBtn = document.getElementById('videoSelectBtn');
 videoSelectBtn.onclick = getVideoSources;
 
-//Get all screens on desktop
-const { Menu, dialog } = remote;
 // async function getVideoSources() {
 //Cannot declre funtoin b/c it will not intialize properly
 async function getVideoSources() {
@@ -31,66 +48,67 @@ async function getVideoSources() {
       };
     })
   );
-
-
   videoOptionsMenu.popup();
 }
 
-let mediaRecorder;  //Global variable to capture video
-const recordedChunks = [];
 
 
-//Change the videoSource Windo to record
-const selectSource = async (source) => {
+
+// Change the videoSource window to record
+async function selectSource(source) {
+
   videoSelectBtn.innerText = source.name;
+
   const constraints = {
     audio: false,
     video: {
       mandatory: {
         chromeMediaSource: 'desktop',
-        chromeMediaSourceId: source.id,
+        chromeMediaSourceId: source.id
       }
     }
   };
 
+  // Create a Stream
+  const stream = await navigator.mediaDevices
+    .getUserMedia(constraints);
 
-  //Create Stream
-  // eslint-disable-next-line no-undef
-  const stream = await navigator.mediaDevices.getUserMedia(constraints);
+  // Preview the source in a video element
   videoElement.srcObject = stream;
   videoElement.play();
 
-  //Create the recorder
+  // Create the Media Recorder
   const options = { mimeType: 'video/webm; codecs=vp9' };
-  mediaRecorder = new mediaRecorder(stream, options);
+  mediaRecorder = new MediaRecorder(stream, options);
 
-  //Regider events
+  // Register Event Handlers
   mediaRecorder.ondataavailable = handleDataAvailable;
   mediaRecorder.onstop = handleStop;
 
-  //Capture all recorded Chunks
-  function handleDataAvailable(e) {
-    console.log('Video Data available');
-    recordedChunks.push(e.data);
+  // Updates the UI
+}
+
+// Captures all recorded chunks
+function handleDataAvailable(e) {
+  console.log('video data available');
+  recordedChunks.push(e.data);
+}
+
+// Saves the video file on stop
+async function handleStop(e) {
+  const blob = new Blob(recordedChunks, {
+    type: 'video/webm; codecs=vp9'
+  });
+
+  const buffer = Buffer.from(await blob.arrayBuffer());
+
+  const { filePath } = await dialog.showSaveDialog({
+    buttonLabel: 'Save video',
+    defaultPath: `vid-${Date.now()}.webm`
+  });
+
+  if (filePath) {
+    writeFile(filePath, buffer, () => console.log('video saved successfully!'));
   }
 
-  //Save the video on stop
-  async function handleStop(e) {
-    // eslint-disable-next-line no-undef
-    const blob = new Blob(recordedChunks, {
-      type: 'video/webm; codecs=vp9'
-    });
-    const buffer = Buffer.from(await blob.arrayBuffer());
-
-    //Dialog
-    const { filePath } = await dialog.showSaveDialog({
-      buttonLabel: 'Save Video',
-      defaultPath: `vid-${Date.now()}.webm`
-    });
-    console.log(filePath);
-    //Where to save, and raw Data, then message of success (callback)
-    writeFile(filePath, buffer, () => `Video saved`);
-  }
-
-};
-
+}
