@@ -9,7 +9,7 @@ App is deployable to desktop using Electron.
 - Electron-Forge
 - FS
 
-### To Run
+### Getting started
 
 1. Clone the Repo
 2. Run `npm install`
