@@ -1,14 +1,14 @@
 //Front End Code
-//Buttons
-const videoElement = document.querySelector('video');
-const startBtn = document.querySelector('startBtn');
-const stopBtn = document.querySelector('stopBtn');
-const videoSelectBtn = document.querySelector('videoSelectBtn');
-videoSelectBtn.onClick = getVideoSources;
-
-//Get all screens on desktop
 // desktopCapturer records screen, remote access' IPC (host proceses)
 const { desktopCapturer, remote } = require('electron');
+const videoElement = document.querySelector('video');
+//Buttons
+const startBtn = document.querySelector('startBtn');
+const stopBtn = document.querySelector('stopBtn');
+const videoSelectBtn = document.getElementById('videoSelectBtn');
+videoSelectBtn.onclick = getVideoSources;
+
+//Get all screens on desktop
 const { Menu } = remote;
 const getVideoSources = async () => {
   const inputSources = await desktopCapturer.getSources({
@@ -19,9 +19,31 @@ const getVideoSources = async () => {
     inputSources.map(source => {
       return {
         label: source.name,
-        click: () => selectSource(source),
+        click: () => selectSource(source)
       };
     })
   );
+
+
   videoOptionsMenu.popup();
+};
+
+//Change the videoSource Windo to record
+const selectSource = async (source) => {
+  videoSelectBtn.innerText = source.name;
+  const constraints = {
+    audio: false,
+    video: {
+      mandatory: {
+        chromeMediaSource: 'desktop',
+        chromeMediaSourceId: source.id,
+      }
+    }
+  };
+
+
+  //Create Stream
+  const stream = await navigator.mediaDevices.getUserMedia(constraints);
+  videoElement.srcObject = stream;
+  videoElement.play();
 };
