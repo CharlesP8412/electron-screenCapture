@@ -10,7 +10,9 @@ videoSelectBtn.onclick = getVideoSources;
 
 //Get all screens on desktop
 const { Menu } = remote;
-const getVideoSources = async () => {
+// async function getVideoSources() {
+//Cannot declre funtoin b/c it will not intialize properly
+async function getVideoSources() {
   const inputSources = await desktopCapturer.getSources({
     types: ['window', 'screen']
   });
